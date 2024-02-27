@@ -1,33 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import List from './components/List/List'
+import md5 from 'md5';
+import { useEffect } from 'react';
 
 function App() {
-  const [count, setCount] = useState(0)
+  useEffect(() => {
+    const password = "Valantis"
+    const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const authString = md5(`${password}_${timestamp}`)
+
+    const fetchData = async () => {
+        try {
+            const res = await fetch("http://api.valantis.store:40000", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Auth': authString,
+                },
+                body: JSON.stringify({
+                    "action": "get_ids",
+                    //"params": { "offset": 0, "limit": 10 },
+                }),
+            });
+            if (res.status === 200) {
+                return res.json();
+            } else if (res.status === 401) {
+                throw new Error('UnauthorixedErrorCode');
+            } else if (res.status === 400) {
+                throw new Error('ErrorCode')
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+    fetchData();
+}, []);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+        <List />
     </>
   )
 }
