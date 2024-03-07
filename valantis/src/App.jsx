@@ -11,7 +11,7 @@ function App() {
 
     const fetchData = async () => {
         try {
-            const res = await fetch("http://api.valantis.store:40000", {
+            const res = await fetch("http://api.valantis.store:40000/", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -19,18 +19,18 @@ function App() {
                 },
                 body: JSON.stringify({
                     "action": "get_ids",
-                    //"params": { "offset": 0, "limit": 10 },
+                    "params": { "offset": 0, "limit": 10 },
                 }),
             });
             if (res.status === 200) {
                 return res.json();
             } else if (res.status === 401) {
-                throw new Error('UnauthorixedErrorCode');
+                throw new Error('UnauthorizedErrorCode');
             } else if (res.status === 400) {
                 throw new Error('ErrorCode')
             }
         } catch (err) {
-            console.error(err);
+            console.error(`Error: ${err}`);
         }
     };
     fetchData();
