@@ -18,10 +18,11 @@ function App() {
                     'X-Auth': authString,
                 },
                 body: JSON.stringify({
-                    "action": "get_ids",
+                    "action": "get_items",
                     "params": { "offset": 0, "limit": 10 },
                 }),
             });
+            console.log(res);
             if (res.status === 200) {
                 return res.json();
             } else if (res.status === 401) {
